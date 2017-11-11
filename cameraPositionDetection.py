@@ -2,8 +2,6 @@
 # coding: utf-8
 
 # In[1]:
-
-
 import cv2
 import math
 import numpy as np
@@ -11,24 +9,19 @@ import numpy as np
 # change the filename to choose the image
 img = cv2.imread('data/IMG_6720.jpg')
 
-
-
 # convert input image to gray scale
 imgray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 # If pixel value is greater than a threshold value, it is assigned  white, otherwise black
 retval, thresholdedimage = cv2.threshold(imgray, 200, 255, cv2.THRESH_BINARY)
 
+# In[2]:
+
 # find the contours of the image
 contourimage, contours, hierarchy = cv2.findContours(thresholdedimage, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
 #delete the outer contour which include the white paper
 contours.pop(0);
-
-
-# In[2]:
-
-
 # find the convex Hull(outer rotated rect) of all the small contours
 all_cont = contours[0]
 for i in range(1, len(contours)):
@@ -53,7 +46,6 @@ print box
 
 
 # In[3]:
-
 
 # the QR code vertex position in image
 object_2d_points = np.float32([top_left,bot_left,bot_right,top_right])
@@ -80,12 +72,11 @@ camera_matrix = np.float32([[fx, 0, cx],
 # reference is as below: 
 # https://stackoverflow.com/questions/18637494/camera-position-in-world-coordinate-from-cvsolvepnp
 found,rvec,tvec = cv2.solvePnP(object_3d_points, object_2d_points, camera_matrix, dist_coefs)
-rotM = cv2.Rodrigues(rvec)[0]
-cameraPosition = -np.matrix(rotM).T * np.matrix(tvec)
 
 
 # In[4]:
-
+rotM = cv2.Rodrigues(rvec)[0]
+cameraPosition = -np.matrix(rotM).T * np.matrix(tvec)
 
 #Given the rotation matrix, compute the rotation angle of each axis, the result is degree format
 def rotationMatrix2Angle(R):
@@ -127,4 +118,3 @@ ax.set_ylabel('Y Label')
 ax.set_zlabel('Z Label')
 
 plt.show()
-
